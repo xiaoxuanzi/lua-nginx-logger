@@ -12,6 +12,40 @@ local function transform( var )
 
 end
 
+local function access_log_fast()
+	local msg_talbe = {};
+	local i = 1;
+	msg_talbe[i++] = '\"timestamp\":\"'
+	msg_talbe[i++] = ngx.var.time_local
+	msg_talbe[i++] = ', \"remote_addr\":\"'
+	msg_talbe[i++] = transform(ngx.var.remote_user)
+	msg_talbe[i++] = ', \"remote_user\":\"' 
+	msg_talbe[i++] = transform(ngx.var.remote_user)
+	msg_talbe[i++] = ', \"upstream_addr\":\"'
+	msg_talbe[i++] = transform(ngx.var.upstream_addr)
+	msg_talbe[i++] = ', \"status\":\"'
+	msg_talbe[i++] = ngx.var.status
+	msg_talbe[i++] = ', \"body_bytes_sent\":\"'
+	msg_talbe[i++] = ngx.var.body_bytes_sent
+	msg_talbe[i++] = ', \"request\":\"'
+	msg_talbe[i++] = ngx.var.request
+	msg_talbe[i++] = ', \"http_user_agent\":\"'
+	msg_talbe[i++] = transform(ngx.var.http_user_agent)
+	msg_talbe[i++] = ', \"request_time\":\"'
+	msg_talbe[i++] = ngx.var.request_time
+	msg_talbe[i++] = ', \"http_referer\":\"'
+	msg_talbe[i++] = transform(ngx.var.http_referer)
+	msg_talbe[i++] = ', \"http_x_forwarded_for\":\"'
+	msg_talbe[i++] = transform(ngx.var.http_x_forwarded_for)
+	msg_talbe[i++] = ', \"server_name\":\"'
+	msg_talbe[i++] = ngx.var.server_name
+	msg_talbe[i++] = ', \"bytes_sent\":\"'
+	msg_talbe[i++] = ngx.var.bytes_sent
+
+	local result = table.concat(msg_talbe)
+	return result
+end
+
 local function access_log()
 
     local msg = '{ ' ..
