@@ -2,68 +2,42 @@ local file_ffi = require "std_ffi.file"
 
 local _M = {}
 
-local function transform( var )
-
-    if var == nil then
-        return '-'
-    end
-
-    return var
-
-end
-
-local function access_log_fast()
-	local msg_talbe = {};
-	local i = 1;
-	msg_talbe[i++] = '\"timestamp\":\"'
-	msg_talbe[i++] = ngx.var.time_local
-	msg_talbe[i++] = ', \"remote_addr\":\"'
-	msg_talbe[i++] = transform(ngx.var.remote_user)
-	msg_talbe[i++] = ', \"remote_user\":\"' 
-	msg_talbe[i++] = transform(ngx.var.remote_user)
-	msg_talbe[i++] = ', \"upstream_addr\":\"'
-	msg_talbe[i++] = transform(ngx.var.upstream_addr)
-	msg_talbe[i++] = ', \"status\":\"'
-	msg_talbe[i++] = ngx.var.status
-	msg_talbe[i++] = ', \"body_bytes_sent\":\"'
-	msg_talbe[i++] = ngx.var.body_bytes_sent
-	msg_talbe[i++] = ', \"request\":\"'
-	msg_talbe[i++] = ngx.var.request
-	msg_talbe[i++] = ', \"http_user_agent\":\"'
-	msg_talbe[i++] = transform(ngx.var.http_user_agent)
-	msg_talbe[i++] = ', \"request_time\":\"'
-	msg_talbe[i++] = ngx.var.request_time
-	msg_talbe[i++] = ', \"http_referer\":\"'
-	msg_talbe[i++] = transform(ngx.var.http_referer)
-	msg_talbe[i++] = ', \"http_x_forwarded_for\":\"'
-	msg_talbe[i++] = transform(ngx.var.http_x_forwarded_for)
-	msg_talbe[i++] = ', \"server_name\":\"'
-	msg_talbe[i++] = ngx.var.server_name
-	msg_talbe[i++] = ', \"bytes_sent\":\"'
-	msg_talbe[i++] = ngx.var.bytes_sent
-
-	local result = table.concat(msg_talbe)
-	return result
-end
-
 local function access_log()
 
-    local msg = '{ ' ..
-        '\"timestamp\":\"'       .. ngx.var.time_local .. ',' ..
-        '\"remote_addr\":\"'     .. ngx.var.remote_addr .. ',' ..
-        '\"remote_user\":\"'     .. transform(ngx.var.remote_user) .. ',' ..
-        '\"upstream_addr\":\"'   .. transform(ngx.var.upstream_addr) .. ',' ..
-        '\"status\":\"'          .. ngx.var.status .. ',' ..
-        '\"body_bytes_sent\":\"' .. ngx.var.body_bytes_sent .. ',' ..
-        '\"request\":\"'         .. ngx.var.request .. ',' ..
-        '\"http_user_agent\":\"' .. transform(ngx.var.http_user_agent) .. ',' ..
-        '\"request_time\":\"'    .. ngx.var.request_time .. ',' ..
-        '\"http_referer\":\"'    .. transform(ngx.var.http_referer) .. ',' ..
-        '\"http_x_forwarded_for\":\"' .. transform(ngx.var.http_x_forwarded_for) .. ',' ..
-        '\"server_name\":\"'     .. ngx.var.server_name .. ',' ..
-        '\"bytes_sent\":\"'      .. ngx.var.bytes_sent .. '}' .. '\n'
+    local msg = {}
 
-    return msg
+    table.insert(msg, '{')
+    table.insert(msg, '\"timestamp\":\"')
+    table.insert(msg, ngx.var.time_local)
+    table.insert(msg, ', \"remote_addr\":\"')
+    table.insert(msg, ngx.var.remote_addr or '-\"')
+    table.insert(msg, ', \"remote_user\":\"')
+    table.insert(msg, ngx.var.remote_user or '-\"')
+    table.insert(msg, ', \"upstream_addr\":\"')
+    table.insert(msg, ngx.var.upstream_addr or '-\"')
+    table.insert(msg, ', \"status\":\"')
+    table.insert(msg, ngx.var.status)
+    table.insert(msg, ', \"body_bytes_sent\":\"')
+    table.insert(msg, ngx.var.body_bytes_sent)
+    table.insert(msg, ', \"request\":\"')
+    table.insert(msg, ngx.var.request)
+    table.insert(msg, ', \"http_user_agent\":\"')
+    table.insert(msg, ngx.var.http_user_agent or '-\"')
+    table.insert(msg, ', \"request_time\":\"')
+    table.insert(msg, ngx.var.request_time)
+    table.insert(msg, ', \"http_referer\":\"')
+    table.insert(msg, ngx.var.http_referer or '-\"')
+    table.insert(msg, ', \"http_x_forwarded_for\":\"')
+    table.insert(msg, ngx.var.http_x_forwarded_for or '-\"')
+    table.insert(msg, ', \"server_name\":\"')
+    table.insert(msg, ngx.var.server_name)
+    table.insert(msg, ', \"bytes_sent\":\"')
+    table.insert(msg, ngx.var.bytes_sent)
+    table.insert(msg, '\"}')
+    table.insert(msg, '\n')
+
+    local result = table.concat(msg)
+    return result
 
 end
 
