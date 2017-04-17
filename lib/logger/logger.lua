@@ -153,15 +153,15 @@ function _M.logger( file_path )
         }
     end
 
-    data[ skey ][ total ] = data[ skey ][ total ] + 1
-    data[ skey ][ err_code ] = err_code
-    data[ skey ][ err_msg ]  = err_msg
+    data[ skey ][ 'total' ] = data[ skey ][ 'total' ] + 1
+    data[ skey ][ 'err_code' ] = err_code
+    data[ skey ][ 'err_msg' ]  = err_msg
 
     set_dict_data( store_data, logger_key, data )
 
 end
 
-function _M.logger_status()
+function _M.status()
 
     local _ret = {
 
