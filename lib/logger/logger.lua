@@ -68,7 +68,7 @@ end
 function _M.logger( file_path )
 
 
-    assert(file_path != nil)
+    assert(file_path ~= nil)
 
     local msg = access_log()
     local res, err_code, err_msg = write_file( msg, file_path )
